@@ -1,13 +1,14 @@
+#version 330
+
 out vec4 outColor;
-uniform sampler2D inTex;
+uniform vec4 uVal;
 
 void main()
 {
-	vec4 smp = texture(inTex, vec2(0.0f, 0.0f));
-	float val = smp.x;
+	float val = uVal.x;
 	
 	for (int i = 0; i < 5; i++) 
 		val *= 0.5f;
 		
-	outColor = vec4(smp.xyz, val);
+	outColor = vec4(uVal.xyz, val);
 }

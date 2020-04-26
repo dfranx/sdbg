@@ -4,7 +4,12 @@ project(sdbg)
 set(CMAKE_MODULE_PATH "./cmake")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ./bin)
 
-add_subdirectory(./libs/ShaderDebugger)
+add_subdirectory(libs/SPIRV-VM)
+
+# glslang
+set(ENABLE_SPVREMAPPER OFF CACHE BOOL "Enables building of SPVRemapper" FORCE)
+set(ENABLE_GLSLANG_BINARIES OFF CACHE BOOL "Builds glslangValidator and spirv-remap" FORCE)
+add_subdirectory(libs/glslang)
 
 # source code
 set(SOURCES
@@ -16,9 +21,6 @@ if(CMAKE_TOOLCHAIN_FILE)
     include(${CMAKE_TOOLCHAIN_FILE})
 endif(CMAKE_TOOLCHAIN_FILE)
 
-# glm
-find_package(GLM REQUIRED)
-
 # create executable
 add_executable(sdbg ${SOURCES})
 
@@ -29,12 +31,10 @@ set_target_properties(sdbg PROPERTIES
 )
 
 # include directories
-target_include_directories(sdbg PRIVATE ${GLM_INCLUDE_DIRS})
-target_include_directories(sdbg PRIVATE libs)
+target_include_directories(sdbg PRIVATE libs libs/SPIRV-VM/inc libs/glslang)
 
 # link libraries
-target_link_libraries(sdbg ShaderDebugger)
-target_link_libraries(sdbg ${GLM_LIBRARY_DIRS})
+target_link_libraries(sdbg glslang SPIRV SPIRVVM)
 
 if (NOT MSVC)
 	target_compile_options(sdbg PRIVATE -Wno-narrowing)
